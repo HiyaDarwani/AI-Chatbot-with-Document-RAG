@@ -1,0 +1,24 @@
+# Next.js build and dependencies
+node_modules/
+.next/
+out/
+build/
+
+# Local database mock data (contains private document texts and hashes)
+lib/mock_db.json
+
+# Environment files (contains API keys and database credentials)
+.env.local
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System files
+.DS_Store
+Thumbs.db
