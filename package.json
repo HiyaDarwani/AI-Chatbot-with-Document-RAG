@@ -9,13 +9,16 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.3",
+    "@google/generative-ai": "^0.24.1",
     "@langchain/textsplitters": "^0.0.3",
     "@supabase/supabase-js": "^2.43.4",
+    "dotenv": "^17.4.2",
     "langchain": "^0.2.10",
     "multer": "^2.0.0",
     "next": "^14.2.0",
     "openai": "^4.52.0",
     "pdf-parse": "^1.1.1",
+    "pg": "^8.22.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

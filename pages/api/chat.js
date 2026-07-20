@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { question, documentId, sessionToken } = req.body;
+  const { question, documentId, sessionToken, history } = req.body;
 
   // ── 1. Input validation ──
   if (!question || typeof question !== 'string' || question.trim().length === 0) {
@@ -64,11 +64,23 @@ export default async function handler(req, res) {
       throw err;
     }
 
-    // ── 4. Cosine similarity search (min 0.35 similarity floor) ──
+    const qLower = question.toLowerCase().trim();
+    const isGreeting = ['hi', 'hello', 'hey', 'greetings', 'help', 'yo', 'good morning', 'good afternoon'].includes(
+      qLower.replace(/[^a-z\s]/g, '')
+    );
+
+    const summaryKeywords = [
+      'summar', 'overview', 'about', 'explain', 'what is this', 'what does this', 
+      'key point', 'main point', 'highlight', 'in the doc', 'in this doc', 'in the document',
+      'table of content', 'describe', 'what is in', 'what is inside', 'tell me about'
+    ];
+    const isGeneralQuery = isGreeting || summaryKeywords.some(keyword => qLower.includes(keyword)) || qLower.length < 15;
+
+    // ── 4. Cosine similarity search (min 0.20 similarity floor for specific queries, 0.0 for general queries) ──
     const chunks = await vectorSearch(queryEmbedding, {
       documentId,
-      matchCount: 5,
-      // minSimilarity default (0.35) applied inside vectorSearch
+      matchCount: 8,
+      minSimilarity: isGeneralQuery ? 0.0 : 0.20,
     });
 
     if (chunks.length === 0) {
@@ -87,7 +99,7 @@ export default async function handler(req, res) {
     }
 
     // ── 5. Stream Claude answer with source citations ──
-    await streamRAGResponse(question.trim(), chunks, res);
+    await streamRAGResponse(question.trim(), chunks, res, history);
   } catch (err) {
     console.error('[/api/chat] Unexpected error:', err);
     if (!res.headersSent) {

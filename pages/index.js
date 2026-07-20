@@ -154,7 +154,12 @@ export default function HomeDashboard() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, documentId: selectedDocId, sessionToken }),
+        body: JSON.stringify({
+          question,
+          documentId: selectedDocId,
+          sessionToken,
+          history: messages, // Send previous chat history (excluding the current typing exchange)
+        }),
       });
 
       if (!response.ok) {

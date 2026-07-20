@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS chunks (
   content_hash TEXT NOT NULL,           -- SHA-256 hex; used for deduplication
   chunk_index  INT NOT NULL,
   source_page  INT,
-  embedding    vector(1536),            -- OpenAI text-embedding-3-small
+  embedding    vector(384),             -- Jina AI jina-embeddings-v3 (384 dimensions)
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -55,7 +55,7 @@ CREATE INDEX IF NOT EXISTS chunks_content_hash_idx
 --    Set to 0.35 in application code to avoid hallucination from weak matches
 -- ============================================================
 CREATE OR REPLACE FUNCTION match_chunks(
-  query_embedding  vector(1536),
+  query_embedding  vector(384),
   match_count      INT     DEFAULT 5,
   filter_doc_id    UUID    DEFAULT NULL,
   min_similarity   FLOAT   DEFAULT 0.0

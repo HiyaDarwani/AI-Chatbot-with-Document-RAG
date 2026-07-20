@@ -20,8 +20,8 @@ DocRAG is a lightweight, secure, and production-ready Document RAG (Retrieval-Au
 * **Frontend Framework:** Next.js (Pages Router)
 * **Styling:** Tailwind CSS & PostCSS
 * **Vector Database:** Supabase (Postgres with `pgvector` extension)
-* **Embeddings Model:** OpenAI `text-embedding-3-small` (1536 dimensions)
-* **LLM Engine:** Anthropic Claude (`claude-sonnet-4-5`)
+* **Embeddings Model:** Jina AI `jina-embeddings-v3` (384 dimensions)
+* **LLM Engines:** Anthropic Claude (`claude-sonnet-4-5`), Google Gemini (`gemini-1.5-flash`), and Groq (`llama-3.3-70b-versatile`)
 * **Utilities:** `multer` (file processing), `pdf-parse` (PDF extraction)
 
 ---
@@ -43,9 +43,13 @@ Create a `.env.local` file in the root directory and add your credentials:
 NEXT_PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
 SUPABASE_SERVICE_KEY=<your-service-role-key>
 
+# Embeddings API
+JINA_API_TOKEN=<your-jina-api-token>
+
 # LLM APIs
-OPENAI_API_KEY=<your-openai-api-key>
 ANTHROPIC_API_KEY=<your-anthropic-api-key>
+GEMINI_API_KEY=<your-gemini-api-key>
+GROQ_API_KEY=<your-groq-api-key>
 ```
 *Note: If these variables contain `<` or are left as placeholders, the application will default to **Mock mode** allowing local testing without API connections.*
 
