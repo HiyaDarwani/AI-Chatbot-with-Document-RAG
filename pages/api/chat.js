@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     const chunks = await vectorSearch(queryEmbedding, {
       documentId,
       matchCount: 8,
-      minSimilarity: isGeneralQuery ? 0.0 : 0.20,
+      minSimilarity: isGeneralQuery ? 0.0 : 0.50,
     });
 
     if (chunks.length === 0) {
@@ -98,8 +98,21 @@ export default async function handler(req, res) {
       return res.end();
     }
 
-    // ── 5. Stream Claude answer with source citations ──
-    await streamRAGResponse(question.trim(), chunks, res, history);
+    // ── 5. Context window token/character budget guard (max 8000 characters) ──
+    const MAX_CONTEXT_CHARS = 8000;
+    let accumulatedLength = 0;
+    const prunedChunks = [];
+    for (const chunk of chunks) {
+      if (prunedChunks.length > 0 && accumulatedLength + chunk.content.length > MAX_CONTEXT_CHARS) {
+        console.log(`[chat] Pruning remaining chunks to respect context token budget (accumulated: ${accumulatedLength} chars)`);
+        break;
+      }
+      prunedChunks.push(chunk);
+      accumulatedLength += chunk.content.length;
+    }
+
+    // ── 6. Stream Claude answer with source citations ──
+    await streamRAGResponse(question.trim(), prunedChunks, res, history);
   } catch (err) {
     console.error('[/api/chat] Unexpected error:', err);
     if (!res.headersSent) {

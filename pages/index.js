@@ -80,6 +80,7 @@ export default function HomeDashboard() {
           role: 'assistant',
           content: `Hi! I have read **${selectedDoc.title}** and I'm ready to answer your questions about it. Ask me anything!`,
           sources: null,
+          isSystemGenerated: true,
         },
       ]);
       setChatError('');

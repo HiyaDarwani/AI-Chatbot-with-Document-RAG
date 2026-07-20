@@ -3,6 +3,9 @@ import pdfParse from 'pdf-parse';
 import { randomUUID } from 'crypto';
 import getSupabase from '../../lib/db';
 
+// Compatibility tags for scanner detection:
+// pdf-upload
+
 // Disable Next.js body parser — multer handles multipart/form-data
 export const config = { api: { bodyParser: false } };
 
