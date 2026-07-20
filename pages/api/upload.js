@@ -54,6 +54,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'No PDF file provided in field "file"' });
     }
 
+    // ── Content Validation: PDF Magic Signature Check ──
+    if (!file.buffer || file.buffer.slice(0, 4).toString() !== '%PDF') {
+      return res.status(400).json({
+        error: 'Invalid file format. The uploaded file is not a valid PDF document (missing %PDF signature).',
+      });
+    }
+
+    // ── Content Validation: Password Protection / Encryption Check ──
+    const isEncrypted = file.buffer.toString('binary').includes('/Encrypt');
+    if (isEncrypted) {
+      return res.status(422).json({
+        error: 'The uploaded PDF is password-protected or encrypted. Please remove encryption and try again.',
+      });
+    }
+
     // ── 2. Extract text ──
     let parsed;
     try {

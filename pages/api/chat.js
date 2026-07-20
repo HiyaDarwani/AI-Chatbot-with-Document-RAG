@@ -98,21 +98,8 @@ export default async function handler(req, res) {
       return res.end();
     }
 
-    // ── 5. Context window token/character budget guard (max 8000 characters) ──
-    const MAX_CONTEXT_CHARS = 8000;
-    let accumulatedLength = 0;
-    const prunedChunks = [];
-    for (const chunk of chunks) {
-      if (prunedChunks.length > 0 && accumulatedLength + chunk.content.length > MAX_CONTEXT_CHARS) {
-        console.log(`[chat] Pruning remaining chunks to respect context token budget (accumulated: ${accumulatedLength} chars)`);
-        break;
-      }
-      prunedChunks.push(chunk);
-      accumulatedLength += chunk.content.length;
-    }
-
-    // ── 6. Stream Claude answer with source citations ──
-    await streamRAGResponse(question.trim(), prunedChunks, res, history);
+    // ── 5. Stream Claude answer with source citations (buildContext inside streamRAGResponse enforces ~3000 tokens budget guard) ──
+    await streamRAGResponse(question.trim(), chunks, res, history);
   } catch (err) {
     console.error('[/api/chat] Unexpected error:', err);
     if (!res.headersSent) {
